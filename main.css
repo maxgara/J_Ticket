@@ -1,0 +1,38 @@
+table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  border: 3px #f5d24a;
+}
+
+th, td {
+  color: beige;
+  font-size: 1.2em;
+  font-weight:900;
+  padding: 20px;
+  border: 3px solid black;
+  text-align: center;
+  background-color:grey;
+}
+
+.collapsed {
+  visibility: collapse;
+}
+
+
+div.newTicketInput {
+    margin-top:3em;
+}
+input.newTicketInput{
+  width: -moz-available;
+  font-size: 1.2em;
+  margin-left: 1.2em;
+  margin-right: 1.2em;
+}
+h2.newTicketInput{
+  margin-left: 1em;
+}
+button.newTicketInput{
+  margin-left: 1em;
+  font-size: 1.2em;
+}

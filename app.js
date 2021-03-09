@@ -1,28 +1,28 @@
 //core server functionality
 const http = require('http');
 const fs = require('fs')
-
 const hostname = '127.0.0.1';
 const port = 3000;
-
 const server = http.createServer((req, res) => {
   console.log(req.url);
-  if(req.url == "/"){
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/html');
-    fs.createReadStream('index.html').pipe(res);
+  //handle request for standard web resources
+  switch(req.url) {
+    case "/":
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/html');
+      fs.createReadStream('main.html').pipe(res);
+      break;
+    case "/main.css":
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/css');
+      fs.createReadStream('main.css').pipe(res);
+    case "/main.js":
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/javascript');
+      fs.createReadStream('main.js').pipe(res);
   }
-  else if(req.url == "/main.css"){
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/css');
-    fs.createReadStream('main.css').pipe(res);
-  }
-  else if(req.url == "/main.js"){
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/javascript');
-    fs.createReadStream('main.js').pipe(res);
-  }
-  else if(req.url.includes("/api/submitTicket/")){
+  //handle api requests
+  if(req.url.includes("/api/submitTicket/")){
     let rex = /api\/submitTicket\/(.+)/g;
     let ticketName = rex.exec(req.url)[1];
     res.statusCode = 200;

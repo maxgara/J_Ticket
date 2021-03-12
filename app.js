@@ -22,12 +22,21 @@ const server = http.createServer((req, res) => {
       fs.createReadStream('main.js').pipe(res);
   }
   //handle api requests
-  if(req.url.includes("/api/submitTicket/")){
-    let rex = /api\/submitTicket\/(.+)/g;
-    let ticketName = rex.exec(req.url)[1];
+  if(req.url.includes("/api/")){
+    let regexSubmitTicketURL = /api\/submitTicket\/(.+)/g;
+    let submitTicketMatch = regexSubmitTicketURL.exec(req.url);
+    let regexSearchURL = /api\/search\/(.+)/g;
+    let searchMatch = regexSearchURL.exec(req.url);
+    if (submitTicketMatch!=null){
+      console.log(submitTicketMatch[1]);
+      var result = createTicket(submitTicketMatch[1]);
+    }
+    else if (searchMatch!=null){
+      console.log(searchMatch[1]);
+      var result = searchTickets(searchMatch[1]);
+    }
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    let result = createTicket(ticketName);
     res.write(JSON.stringify(result));
     res.end();
     writeTickets();
@@ -40,8 +49,8 @@ server.listen(port, hostname, () => {
 });
 
 //ticket handling
-
-var ticketsArray = [];
+var ticketsArray =[];
+//readTickets().then(tickets => ticketsArray=tickets);
 function Ticket(ticketName){
   this.ticketName = ticketName;
   this.dateCreated = new Date();
@@ -58,12 +67,27 @@ function createTicket(name){
 
 function writeTickets(){
   fs.writeFile("tickets.txt", JSON.stringify(ticketsArray), function(err){
-    console.log(`error writing:${err}`);
+    if (err!==null){
+      console.log(`error writing:${err}`);
+    }
+  });
+}
+readTickets();
+function readTickets(){
+  fs.readFile("tickets.txt","utf8",function(err, tickets){
+  ticketsArray = JSON.parse(tickets);
+  Ticket.count = ticketsArray.length + 1;
   });
 }
 
 function searchTickets(searchStr){
-  let searchRegex = new RegExp(searchStr);
-  let results = ticketsArray.filter(ticket => searchRegex.test(ticket.name));
+  let results = ticketsArray.filter(ticket => checkTicketMatch(searchStr, ticket));
   return results;
+  function checkTicketMatch(searchStr, ticket){
+    let searchRegex = new RegExp(searchStr);
+    let nameMatch = searchRegex.test(ticket.ticketName);
+    let IDMatch = searchRegex.test(ticket.ticketID);
+    let dateMatch = searchRegex.test(ticket.dateCreated);
+    return (nameMatch || IDMatch || dateMatch);
+  }
 }

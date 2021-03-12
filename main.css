@@ -17,8 +17,20 @@ th, td {
 
 .collapsed {
   visibility: collapse;
+  width: 0;
+  height: 0;
 }
 
+input.searchInput{
+  width: -moz-available;
+  font-size: 1.2em;
+  margin-left: 1.2em;
+  margin-right: 1.2em;
+}
+button.searchInput{
+  margin-left: 1em;
+  font-size: 1.2em;
+}
 
 div.newTicketInput {
     margin-top:3em;

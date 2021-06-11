@@ -1,10 +1,9 @@
-
-
 <HTML>
-
 <HEAD>
 <link href='main.css' rel='stylesheet' type='text/css'>
+<script defer src='searchHandler.js' type='text/javascript'></script>
 <script defer src='main.js' type='text/javascript'></script>
+
 
 <TITLE>Your Title Here</TITLE>
 
@@ -19,9 +18,10 @@
 
 </tr>
 </table>
-<div class="newTicketInput collapsed">
+<div class="newTicketInput collapsed" id="container">
   <h2 class="newTicketInput">Ticket Name</h2>
   <input type="text" class="newTicketInput" id="ticketName">
+  <button class="newTicketInput" id="addFlexField">Add Flex Field</button>
   <button class="newTicketInput" id="submit">submit</button>
 </div>
 
@@ -30,5 +30,4 @@
   <button class="searchInput" id="submit">search</button>
 </div>
 </BODY>
-
 </HTML>

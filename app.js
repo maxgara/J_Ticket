@@ -20,21 +20,41 @@ const server = http.createServer((req, res) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/javascript');
       fs.createReadStream('main.js').pipe(res);
+    case "/searchHandler.js":
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/javascript');
+      fs.createReadStream('searchHandler.js').pipe(res);
   }
   //handle api requests
   if(req.url.includes("/api/")){
-    let regexSubmitTicketURL = /api\/submitTicket\/(.+)/g;
-    let submitTicketMatch = regexSubmitTicketURL.exec(req.url);
+    var regexSubmitTicketURL = /api\/submitTicket\/(?<name>[\w\s]+)\?(?<flexFields>(?:[\&\?]{0,1}[\w\s=]+)*)/g;
+    var submitTicketMatch = regexSubmitTicketURL.exec(req.url);
     let regexSearchURL = /api\/search\/(.+)/g;
     let searchMatch = regexSearchURL.exec(req.url);
+    let result = undefined;
     if (submitTicketMatch!=null){
-      console.log(submitTicketMatch[1]);
-      var result = createTicket(submitTicketMatch[1]);
+      let ticketName = submitTicketMatch.groups.name;
+      let flexFields = submitTicketMatch.groups.flexFields.split('&');
+      console.log("&split "+flexFields);
+      for(let i=0;i<flexFields.length;i++){
+        flexFields[i] = flexFields[i].split("=");
+        console.log("=split"+ flexFields);
+        for (let j=0;j<flexFields[i].length;j++){
+          flexFields[i][j] = flexFields[i][j].trim();
+        }
+      }
+      console.log(flexFields);
+      console.log(ticketName + flexFields);
+      result = createTicket(ticketName,...flexFields);
     }
     else if (searchMatch!=null){
       console.log(searchMatch[1]);
-      var result = searchTickets(searchMatch[1]);
+      result = searchTickets(searchMatch[1]);
     }
+    else{
+      result = ticketsArray;
+    }
+
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.write(JSON.stringify(result));
@@ -59,8 +79,10 @@ function Ticket(ticketName){
 }
 Ticket.count = 0;
 
-function createTicket(name){
+function createTicket(name,...flexFields){
   var ticket = new Ticket(name);
+
+  ticket.flexFields = flexFields;
   ticketsArray.push(ticket);
   return ticketsArray;
 }
@@ -81,6 +103,9 @@ function readTickets(){
 }
 
 function searchTickets(searchStr){
+  if(searchStr === null){
+    searchStr = '*';
+  }
   let results = ticketsArray.filter(ticket => checkTicketMatch(searchStr, ticket));
   return results;
   function checkTicketMatch(searchStr, ticket){

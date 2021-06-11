@@ -27,8 +27,8 @@ submitTicketButton.addEventListener('click', function(){
     for(let i=0; i<flexFieldElements.length; i++){
       flexFieldValues.push(flexFieldElements[i].value);
     }
-    console.log("ticketNameElement:");
-    console.log(ticketNameElement.value);
+    // console.log("ticketNameElement:");
+    // console.log(ticketNameElement.value);
     sendTicketRequest(ticketNameElement.value,...flexFieldValues)
     .then(results => displayTickets(results));
     ticketNameElement.value = null;
@@ -54,7 +54,7 @@ function parseSearch(searchStr){
     let wordRegex = /^\w*/;
     for(let i=1; i<sections.length; i++){
       let command = wordRegex.exec(sections[i])[0];
-      console.log(command);
+      // console.log(command);
     }
     return sendSearchRequest(mainSearch);
 }
@@ -70,7 +70,7 @@ function sendTicketRequest(ticketName,...flexFieldValues){
   for(let i=1; i<flexFieldValues.length; i++){
 
     flexString += `&${flexFieldValues[i]}`;
-    console.log(flexFieldValues[i]);
+    // console.log(flexFieldValues[i]);
   }
   fetchStr = `${document.location.href}api/submitTicket/${ticketName}${flexString}`;
   return fetch(fetchStr)

@@ -15,6 +15,37 @@ async function getTicketsNow(){
     makeTable(tableArr);
 
 }
+function parseSearch(searchStr){
+    //break up into pipes
+    let search = [];
+    let subStrs = searchStr.split('|');
+    for (let str of subStrs){
+      let attributes = [];
+      let arr = str.trim().split(' ');
+      if(arr[0]=="table"){
+          attributes.command = "table";
+          attributes.fields = arr.splice(1);
+      }
+      if(arr[0]=="search"){
+          attributes.command = "search";
+          let literalRegex = /\".*?\"/g;
+          let literalStrs = str.match(literalRegex);
+          let normalStr = str.replace(literalRegex, "~LITERAL~").replace(/\s*\=\s*/g,"=");
+          let terms = normalStr.split(' ').splice(1).map(term =>
+            term.replace(/^(not|NOT)$/, "!")
+            .replace(/^(or|OR)$/, "|")
+            .replace(/^(and|AND)$/, "&")
+            .replace(/~LITERAL~/,() => {
+              let literal = literalStrs[0];
+              literalStrs.splice(1);
+              return literal;
+            }));
+            );
+      }
+      search.push(attributes);
+    }
+}
+
 function makeTableArray(commandStr,tickets) {
 //example commandStr: "COUNT BY user, customer WHERE ticketName=test"
   let regex = /(?<tableColumns>.*)(WHERE|where)(?<wheres>.*)/g;

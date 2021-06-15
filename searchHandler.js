@@ -1,48 +1,19 @@
-getTicketsNow();
+// getTicketsNow();
 var tickets;
+function sendSearchRequest(searchStr){
+  let fetchStr = `${document.location.href}api/search/${searchStr}`;
+  return fetch(fetchStr)
+  .then(results => results.json());
+}
+
 async function getTicketsNow(){
+  //function for testing
   tickets = await sendSearchRequest("");
     // console.log(tickets);
     // makeTableArray("count by teststr where flex=5", tickets);
     let tableArr = makeTableArray("teststr namestr thirdfield where flex=5",tickets);
-    makeTicketTable(tableArr);
+    makeTable(tableArr);
 
-}
-function makeStatsArray(commandStr,tickets) {
-//example commandStr: "COUNT BY user, customer WHERE ticketName=test"
-  let regex = /(?<funcs>.*)(BY|by)(?<bys>.*)(WHERE|where)(?<wheres>.*)/g;
-  let matches=regex.exec(commandStr);
-  let whereStrs = matches.groups.wheres.split(" ");
-  let wherefvPairs = [];
-  for (let i=0;i<whereStrs.length;i++) {
-    let fvPair = whereStrs[i].split('=');
-    if(fvPair.length == 2){
-      wherefvPairs.push(fvPair);
-    }
-  }
-  let byStrs = matches.groups.bys.trim().split(" ");
-  // console.log(byStrs);
-  let filteredTickets = [];
-  for (let ticket of tickets.filter(a => a.flexFields && a.flexFields)){
-    let ticketPass = true;
-    for (let filterPair of wherefvPairs){
-      let filterPass = false;
-      for (let ticketPair of ticket.flexFields){
-        console.log(`${ticketPair} against ${filterPair}`);
-        if (ticketPair.length==2 && ticketPair[0]==filterPair[0] && ticketPair[1]==filterPair[1]){
-            filterPass = true;
-        }
-    }
-    if(!filterPass){
-      ticketPass = false;
-      break;
-      }
-    }
-    if(ticketPass){
-      filteredTickets.push(ticket);
-    }
-  }
-  console.log(filteredTickets);
 }
 function makeTableArray(commandStr,tickets) {
 //example commandStr: "COUNT BY user, customer WHERE ticketName=test"
@@ -94,7 +65,9 @@ function makeTableArray(commandStr,tickets) {
   console.log(tableArr);
   return tableArr;
 }
-function makeTicketTable(tableArr){
+
+function makeTable(tableArr){
+  //display array in data table
   let newTicketInput = document.querySelector('div.newTicketInput');
   newTicketInput.classList.add('collapsed');
   let newSearchInput = document.querySelector('div.SearchInput');

@@ -14,6 +14,15 @@ td {
   text-align: center;
   background-color:grey;
 }
+th {
+  color: black;
+  font-size: 1.2em;
+  font-weight:900;
+  padding: 20px;
+  border: 3px solid black;
+  text-align: center;
+  background-color:white;
+}
 
 td.special {
   background-color:blue;
